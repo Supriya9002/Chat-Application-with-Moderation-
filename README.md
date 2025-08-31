@@ -387,39 +387,7 @@ Ensure all environment variables are properly configured for production:
 - **Memory Management**: Proper cleanup of WebSocket connections
 - **Scalability**: Horizontal scaling ready with Redis for session storage
 
-## 🧪 Testing
 
-### Manual Testing Checklist
-- [ ] User registration and login
-- [ ] Channel creation and joining
-- [ ] Real-time message sending
-- [ ] Typing indicators
-- [ ] Message flagging and moderation
-- [ ] User online/offline status
-- [ ] Rate limiting and spam prevention
-- [ ] Content filtering and profanity detection
-
-### API Testing
-Use tools like Postman or curl to test all endpoints:
-```bash
-# Test registration
-curl -X POST http://localhost:3001/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"username":"testuser","email":"test@example.com","password":"password123"}'
-
-# Test login
-curl -X POST http://localhost:3001/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"test@example.com","password":"password123"}'
-```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
 
 ## 📄 License
 
