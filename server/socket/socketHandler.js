@@ -70,8 +70,10 @@ const updateUserOnlineStatus = async (userId, isOnline) => {
 const joinUserChannels = async (socket) => {
   try {
     const channels = await Channel.find({ 'members.user': socket.userId });
+    console.log(`User ${socket.user.username} joining channels:`, channels.map(c => c._id));
     channels.forEach(channel => {
       socket.join(`channel-${channel._id}`);
+      console.log(`User ${socket.user.username} joined channel room: channel-${channel._id}`);
     });
   } catch (error) {
     console.error('Error joining channels:', error);
@@ -142,7 +144,21 @@ const handleRealTimeMessage = async (io, socket, data) => {
       moderation_status: moderation.flagged ? 'auto_filtered' : 'approved'
     });
 
+    console.log('WebSocket Message before save:', {
+      id: message._id,
+      content: message.content,
+      created_at: message.created_at,
+      updated_at: message.updated_at
+    });
+
     await message.save();
+
+    console.log('WebSocket Message after save:', {
+      id: message._id,
+      content: message.content,
+      created_at: message.created_at,
+      updated_at: message.updated_at
+    });
     await message.populate('user_id', 'username avatar_color');
 
     // Update channel last activity
@@ -153,8 +169,30 @@ const handleRealTimeMessage = async (io, socket, data) => {
     const typingKey = `${channelId}-${socket.userId}`;
     typingUsers.delete(typingKey);
 
+    // Format message for emission
+    const formattedMessage = message.toObject({ 
+      virtuals: true,
+      getters: true,
+      transform: (doc, ret) => {
+        // Ensure timestamps are included
+        if (ret.created_at) {
+          ret.created_at = new Date(ret.created_at).toISOString();
+        } else {
+          ret.created_at = new Date().toISOString();
+        }
+        
+        if (ret.updated_at) {
+          ret.updated_at = new Date(ret.updated_at).toISOString();
+        } else {
+          ret.updated_at = new Date().toISOString();
+        }
+        
+        return ret;
+      }
+    });
+
     // Emit to all channel members
-    io.to(`channel-${channelId}`).emit('new-message', message);
+    io.to(`channel-${channelId}`).emit('new-message', formattedMessage);
     
     // Send confirmation to sender
     socket.emit('message-sent', { 
@@ -170,10 +208,17 @@ const handleRealTimeMessage = async (io, socket, data) => {
 
 const handleJoinChannel = async (socket, channelId) => {
   try {
+    console.log(`User ${socket.user.username} attempting to join channel: ${channelId}`);
     const channel = await Channel.findById(channelId);
     if (channel && channel.isMember(socket.userId)) {
       socket.join(`channel-${channelId}`);
+      console.log(`User ${socket.user.username} joined channel room: channel-${channelId}`);
       socket.emit('channel-joined', { channelId });
+    } else {
+      console.log(`User ${socket.user.username} cannot join channel ${channelId}:`, {
+        channelExists: !!channel,
+        isMember: channel ? channel.isMember(socket.userId) : false
+      });
     }
   } catch (error) {
     console.error('Error joining channel:', error);

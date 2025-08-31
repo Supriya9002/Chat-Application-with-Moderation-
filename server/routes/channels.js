@@ -35,6 +35,13 @@ router.post('/', authenticateToken, async (req, res) => {
     await channel.populate('created_by', 'username avatar_color');
     await channel.populate('members.user', 'username avatar_color is_online');
 
+    console.log('Created channel:', {
+      id: channel._id,
+      name: channel.name,
+      memberCount: channel.members?.length || 0,
+      members: channel.members
+    });
+
     res.status(201).json({
       message: 'Channel created successfully',
       channel
@@ -54,8 +61,16 @@ router.get('/', authenticateToken, async (req, res) => {
     .populate('members.user', 'username avatar_color is_online')
     .sort({ last_activity: -1 });
 
+    console.log('Sending channels to user:', channels.map(c => ({
+      id: c._id,
+      name: c.name,
+      memberCount: c.members?.length || 0,
+      members: c.members
+    })));
+
     res.json({ channels });
   } catch (error) {
+    console.error('Error fetching channels:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });

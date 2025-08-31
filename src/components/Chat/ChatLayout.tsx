@@ -34,6 +34,7 @@ const ChatLayout: React.FC = () => {
 
       if (response.ok) {
         const data = await response.json();
+        console.log('Fetched channels:', data.channels);
         setChannels(data.channels);
         if (data.channels.length > 0 && !activeChannel) {
           setActiveChannel(data.channels[0]);
@@ -87,8 +88,8 @@ const ChatLayout: React.FC = () => {
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex">
-        <div className="flex-1">
+      <div className="flex-1 flex min-w-0">
+        <div className="flex-1 min-w-0 overflow-hidden">
           {activeChannel ? (
             <ChatArea channel={activeChannel} />
           ) : (

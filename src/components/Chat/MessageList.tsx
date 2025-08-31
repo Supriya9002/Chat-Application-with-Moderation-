@@ -15,7 +15,7 @@ const MessageList: React.FC<MessageListProps> = ({
   messagesEndRef
 }) => {
   return (
-    <div className="h-full overflow-y-auto p-4 space-y-4">
+    <div className="h-full overflow-y-auto p-4 space-y-4 w-full">
       {messages.length === 0 ? (
         <div className="h-full flex items-center justify-center">
           <div className="text-center text-gray-400">

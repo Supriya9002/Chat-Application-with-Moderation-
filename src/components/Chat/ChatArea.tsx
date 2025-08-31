@@ -50,7 +50,12 @@ const ChatArea: React.FC<ChatAreaProps> = ({ channel }) => {
     };
 
     const handleMessageDeleted = ({ messageId }: { messageId: string }) => {
-      setMessages(prev => prev.filter(msg => msg._id !== messageId));
+      console.log('Received message-deleted event for messageId:', messageId);
+      setMessages(prev => {
+        const filtered = prev.filter(msg => msg._id !== messageId);
+        console.log('Messages after deletion:', filtered.length, 'Previous count:', prev.length);
+        return filtered;
+      });
     };
 
     const handleTypingUpdate = ({ channelId, typingUsers: users }: { channelId: string; typingUsers: any[] }) => {
@@ -116,10 +121,10 @@ const ChatArea: React.FC<ChatAreaProps> = ({ channel }) => {
   };
 
   return (
-    <div className="h-full flex flex-col bg-gray-900">
+    <div className="h-full flex flex-col bg-gray-900 w-full">
       <ChannelHeader channel={channel} />
       
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-hidden w-full min-w-0">
         {loading ? (
           <div className="h-full flex items-center justify-center">
             <div className="text-gray-400">Loading messages...</div>
@@ -133,7 +138,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({ channel }) => {
         )}
       </div>
 
-      <MessageInput onSendMessage={handleSendMessage} onTyping={handleTyping} />
+      <MessageInput onSendMessage={handleSendMessage} onTyping={handleTyping} channel={channel} />
     </div>
   );
 };

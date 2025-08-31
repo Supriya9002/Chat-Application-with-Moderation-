@@ -17,10 +17,19 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, showAvatar }) => {
   const canModerate = user?.role === 'moderator' || user?.role === 'admin';
 
   const formatTime = (dateString: string) => {
-    return new Date(dateString).toLocaleTimeString([], { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return 'Invalid Date';
+      }
+      return date.toLocaleTimeString([], { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+    } catch (error) {
+      console.error('Error formatting date:', error, dateString);
+      return 'Invalid Date';
+    }
   };
 
   const handleFlag = async (reason: string) => {
@@ -46,23 +55,33 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, showAvatar }) => {
 
   const handleDelete = async () => {
     try {
+      console.log('Attempting to delete message:', message._id);
       const token = localStorage.getItem('token');
       const response = await fetch(`http://localhost:3001/api/messages/${message._id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
 
+      console.log('Delete response status:', response.status);
+      
       if (response.ok) {
+        console.log('Message deleted successfully');
         setShowActions(false);
+        // The WebSocket event will handle the UI update
+      } else {
+        const errorData = await response.json();
+        console.error('Delete failed:', errorData);
+        alert('Failed to delete message: ' + (errorData.message || 'Unknown error'));
       }
     } catch (error) {
       console.error('Error deleting message:', error);
+      alert('Error deleting message: ' + error);
     }
   };
 
   return (
-    <div className="group relative">
-      <div className={`flex space-x-3 ${showAvatar ? '' : 'ml-12'}`}>
+    <div className="group relative w-full">
+      <div className={`flex space-x-3 w-full ${showAvatar ? '' : 'ml-12'}`}>
         {showAvatar && (
           <div
             className="w-10 h-10 rounded-full flex items-center justify-center text-white font-medium flex-shrink-0"
@@ -72,7 +91,7 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, showAvatar }) => {
           </div>
         )}
         
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 max-w-full overflow-hidden">
           {showAvatar && (
             <div className="flex items-baseline space-x-2 mb-1">
               <span className="font-medium text-white">{message.user_id.username}</span>
@@ -86,7 +105,19 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, showAvatar }) => {
             </div>
           )}
           
-          <div className={`text-gray-300 ${message.is_flagged ? 'opacity-75' : ''}`}>
+          <div 
+            className={`text-gray-300 ${message.is_flagged ? 'opacity-75' : ''} break-words whitespace-pre-wrap overflow-hidden max-w-full`} 
+            style={{ 
+              wordBreak: 'break-all', 
+              overflowWrap: 'break-word',
+              maxWidth: '100%',
+              overflow: 'hidden',
+              hyphens: 'auto',
+              display: 'block',
+              width: '100%'
+            }}
+            onMouseEnter={() => console.log('Message content:', message.content, 'Length:', message.content.length)}
+          >
             {message.content}
           </div>
         </div>

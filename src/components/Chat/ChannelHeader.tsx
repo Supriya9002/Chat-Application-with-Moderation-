@@ -7,6 +7,7 @@ interface ChannelHeaderProps {
 }
 
 const ChannelHeader: React.FC<ChannelHeaderProps> = ({ channel }) => {
+  console.log('ChannelHeader received channel:', channel);
   return (
     <div className="p-4 border-b border-gray-700 bg-gray-800">
       <div className="flex items-center justify-between">
@@ -28,7 +29,9 @@ const ChannelHeader: React.FC<ChannelHeaderProps> = ({ channel }) => {
         <div className="flex items-center space-x-3">
           <div className="flex items-center space-x-1 text-gray-400">
             <Users className="w-4 h-4" />
-            <span className="text-sm">{channel.members?.length || 0}</span>
+            <span className="text-sm">
+              {Array.isArray(channel.members) ? channel.members.length : 0}
+            </span>
           </div>
           
           <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors duration-200">
