@@ -78,11 +78,6 @@ JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
 # Client URL
 CLIENT_URL=http://localhost:5173
 
-# Rate Limiting
-RATE_LIMIT_WINDOW_MS=900000
-RATE_LIMIT_MAX_REQUESTS=100
-MESSAGE_RATE_LIMIT_WINDOW_MS=60000
-MESSAGE_RATE_LIMIT_MAX_REQUESTS=20
 ```
 
 ### 4. Start MongoDB
