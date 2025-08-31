@@ -444,6 +444,4 @@ For support and questions:
 - **Video Calls**: WebRTC integration
 - **Advanced Moderation**: AI-powered content analysis
 - **Mobile App**: React Native mobile application
-- **Analytics Dashboard**: User activity and moderation analytics#   - C h a t - A p p l i c a t i o n - w i t h - M o d e r a t i o n 
- 
- 
+- **Analytics Dashboard**: User activity and moderation analytics
