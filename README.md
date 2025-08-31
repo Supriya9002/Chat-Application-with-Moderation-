@@ -393,18 +393,4 @@ Ensure all environment variables are properly configured for production:
 
 This project is licensed under the MIT License.
 
-## 🆘 Support
 
-For support and questions:
-- Create an issue in the repository
-- Check the API documentation
-- Review the WebSocket events documentation
-
-## 🔮 Future Enhancements
-
-- **File Upload**: Support for image and file sharing
-- **Voice Messages**: Audio message support
-- **Video Calls**: WebRTC integration
-- **Advanced Moderation**: AI-powered content analysis
-- **Mobile App**: React Native mobile application
-- **Analytics Dashboard**: User activity and moderation analytics
