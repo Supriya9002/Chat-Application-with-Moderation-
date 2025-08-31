@@ -1,6 +1,12 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { io, Socket } from 'socket.io-client';
-import { useAuth } from './AuthContext';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
+import { io, Socket } from "socket.io-client";
+import { useAuth } from "./AuthContext";
 
 interface SocketContextType {
   socket: Socket | null;
@@ -10,7 +16,9 @@ interface SocketContextType {
 
 const SocketContext = createContext<SocketContextType | undefined>(undefined);
 
-export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const SocketProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [connected, setConnected] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState([]);
@@ -18,26 +26,26 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
   useEffect(() => {
     if (user && token) {
-      const newSocket = io('http://localhost:3001', {
-        auth: { token }
+      const newSocket = io("http://localhost:3001", {
+        auth: { token },
       });
 
-      newSocket.on('connect', () => {
-        console.log('Connected to server');
+      newSocket.on("connect", () => {
+        console.log("Connected to server");
         setConnected(true);
       });
 
-      newSocket.on('disconnect', () => {
-        console.log('Disconnected from server');
+      newSocket.on("disconnect", () => {
+        console.log("Disconnected from server");
         setConnected(false);
       });
 
-      newSocket.on('connect_error', (error) => {
-        console.error('Socket connection error:', error);
+      newSocket.on("connect_error", (error) => {
+        console.error("Socket connection error:", error);
         setConnected(false);
       });
 
-      newSocket.on('users-online', (users) => {
+      newSocket.on("users-online", (users) => {
         setOnlineUsers(users);
       });
 
@@ -59,7 +67,7 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 export const useSocket = () => {
   const context = useContext(SocketContext);
   if (!context) {
-    throw new Error('useSocket must be used within SocketProvider');
+    throw new Error("useSocket must be used within SocketProvider");
   }
   return context;
 };

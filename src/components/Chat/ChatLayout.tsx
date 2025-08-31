@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import Sidebar from './Sidebar';
-import ChatArea from './ChatArea';
-import UserList from './UserList';
-import { useSocket } from '../../contexts/SocketContext';
+import React, { useState, useEffect } from "react";
+import Sidebar from "./Sidebar";
+import ChatArea from "./ChatArea";
+import UserList from "./UserList";
+import { useSocket } from "../../contexts/SocketContext";
 
 export interface Channel {
   _id: string;
@@ -27,21 +27,21 @@ const ChatLayout: React.FC = () => {
 
   const fetchChannels = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/channels', {
-        headers: { Authorization: `Bearer ${token}` }
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://localhost:3001/api/channels", {
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (response.ok) {
         const data = await response.json();
-        console.log('Fetched channels:', data.channels);
+        console.log("Fetched channels:", data.channels);
         setChannels(data.channels);
         if (data.channels.length > 0 && !activeChannel) {
           setActiveChannel(data.channels[0]);
         }
       }
     } catch (error) {
-      console.error('Error fetching channels:', error);
+      console.error("Error fetching channels:", error);
     } finally {
       setLoading(false);
     }
@@ -50,18 +50,18 @@ const ChatLayout: React.FC = () => {
   const handleChannelSelect = (channel: Channel) => {
     setActiveChannel(channel);
     if (socket) {
-      socket.emit('join-channel', channel._id);
+      socket.emit("join-channel", channel._id);
     }
   };
 
   const handleChannelCreated = (newChannel: Channel) => {
-    setChannels(prev => [newChannel, ...prev]);
+    setChannels((prev) => [newChannel, ...prev]);
     setActiveChannel(newChannel);
   };
 
   const handleChannelJoined = (channel: Channel) => {
-    setChannels(prev => {
-      const exists = prev.find(c => c._id === channel._id);
+    setChannels((prev) => {
+      const exists = prev.find((c) => c._id === channel._id);
       return exists ? prev : [channel, ...prev];
     });
   };
@@ -91,11 +91,30 @@ const ChatLayout: React.FC = () => {
       <div className="flex-1 flex min-w-0">
         <div className="flex-1 min-w-0 overflow-hidden">
           {activeChannel ? (
-            <ChatArea channel={activeChannel} />
+            <ChatArea
+              channel={activeChannel}
+              onLeaveChannel={() => {
+                // Remove channel from user's channels
+                setChannels((prev) =>
+                  prev.filter((c) => c._id !== activeChannel._id)
+                );
+                // Select first available channel or set to null
+                if (channels.length > 1) {
+                  const nextChannel = channels.find(
+                    (c) => c._id !== activeChannel._id
+                  );
+                  setActiveChannel(nextChannel || null);
+                } else {
+                  setActiveChannel(null);
+                }
+              }}
+            />
           ) : (
             <div className="h-full flex items-center justify-center">
               <div className="text-center text-gray-400">
-                <h2 className="text-2xl font-semibold mb-2">Welcome to ChatApp</h2>
+                <h2 className="text-2xl font-semibold mb-2">
+                  Welcome to ChatApp
+                </h2>
                 <p>Select a channel to start chatting</p>
               </div>
             </div>

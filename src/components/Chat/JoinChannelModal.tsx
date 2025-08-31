@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { X, Hash, Users } from 'lucide-react';
-import type { Channel } from './ChatLayout';
+import React, { useState, useEffect } from "react";
+import { X, Hash, Users } from "lucide-react";
+import type { Channel } from "./ChatLayout";
 
 interface JoinChannelModalProps {
   onClose: () => void;
@@ -9,7 +9,7 @@ interface JoinChannelModalProps {
 
 const JoinChannelModal: React.FC<JoinChannelModalProps> = ({
   onClose,
-  onChannelJoined
+  onChannelJoined,
 }) => {
   const [publicChannels, setPublicChannels] = useState<Channel[]>([]);
   const [loading, setLoading] = useState(true);
@@ -21,17 +21,20 @@ const JoinChannelModal: React.FC<JoinChannelModalProps> = ({
 
   const fetchPublicChannels = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/channels/public', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        "http://localhost:3001/api/channels/public",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
         setPublicChannels(data.channels);
       }
     } catch (error) {
-      console.error('Error fetching public channels:', error);
+      console.error("Error fetching public channels:", error);
     } finally {
       setLoading(false);
     }
@@ -39,13 +42,16 @@ const JoinChannelModal: React.FC<JoinChannelModalProps> = ({
 
   const handleJoinChannel = async (channelId: string) => {
     setJoining(channelId);
-    
+
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3001/api/channels/${channelId}/join`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `http://localhost:3001/api/channels/${channelId}/join`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       const data = await response.json();
 
@@ -53,10 +59,10 @@ const JoinChannelModal: React.FC<JoinChannelModalProps> = ({
         onChannelJoined(data.channel);
         onClose();
       } else {
-        console.error('Error joining channel:', data.message);
+        console.error("Error joining channel:", data.message);
       }
     } catch (error) {
-      console.error('Error joining channel:', error);
+      console.error("Error joining channel:", error);
     } finally {
       setJoining(null);
     }
@@ -77,9 +83,13 @@ const JoinChannelModal: React.FC<JoinChannelModalProps> = ({
 
         <div className="space-y-2 overflow-y-auto max-h-64">
           {loading ? (
-            <div className="text-center py-8 text-gray-400">Loading channels...</div>
+            <div className="text-center py-8 text-gray-400">
+              Loading channels...
+            </div>
           ) : publicChannels.length === 0 ? (
-            <div className="text-center py-8 text-gray-400">No public channels available</div>
+            <div className="text-center py-8 text-gray-400">
+              No public channels available
+            </div>
           ) : (
             publicChannels.map((channel) => (
               <div
@@ -90,9 +100,13 @@ const JoinChannelModal: React.FC<JoinChannelModalProps> = ({
                   <div className="flex items-center space-x-2 min-w-0 flex-1">
                     <Hash className="w-4 h-4 text-gray-400 flex-shrink-0" />
                     <div className="min-w-0 flex-1">
-                      <div className="font-medium text-white truncate">{channel.name}</div>
+                      <div className="font-medium text-white truncate">
+                        {channel.name}
+                      </div>
                       {channel.description && (
-                        <div className="text-xs text-gray-400 truncate">{channel.description}</div>
+                        <div className="text-xs text-gray-400 truncate">
+                          {channel.description}
+                        </div>
                       )}
                       <div className="flex items-center space-x-2 text-xs text-gray-500 mt-1">
                         <Users className="w-3 h-3" />
@@ -105,7 +119,7 @@ const JoinChannelModal: React.FC<JoinChannelModalProps> = ({
                     disabled={joining === channel._id}
                     className="ml-3 px-3 py-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-sm rounded-md transition-colors duration-200"
                   >
-                    {joining === channel._id ? 'Joining...' : 'Join'}
+                    {joining === channel._id ? "Joining..." : "Join"}
                   </button>
                 </div>
               </div>

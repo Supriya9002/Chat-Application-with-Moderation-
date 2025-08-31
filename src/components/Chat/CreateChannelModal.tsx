@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { X, Hash, Lock } from 'lucide-react';
-import type { Channel } from './ChatLayout';
+import React, { useState } from "react";
+import { X, Hash, Lock } from "lucide-react";
+import type { Channel } from "./ChatLayout";
 
 interface CreateChannelModalProps {
   onClose: () => void;
@@ -9,12 +9,12 @@ interface CreateChannelModalProps {
 
 const CreateChannelModal: React.FC<CreateChannelModalProps> = ({
   onClose,
-  onChannelCreated
+  onChannelCreated,
 }) => {
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    is_private: false
+    name: "",
+    description: "",
+    is_private: false,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,14 +25,14 @@ const CreateChannelModal: React.FC<CreateChannelModalProps> = ({
     setError(null);
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/channels', {
-        method: 'POST',
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://localhost:3001/api/channels", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
       const data = await response.json();
@@ -44,7 +44,7 @@ const CreateChannelModal: React.FC<CreateChannelModalProps> = ({
         setError(data.message);
       }
     } catch (error) {
-      setError('Failed to create channel');
+      setError("Failed to create channel");
     } finally {
       setLoading(false);
     }
@@ -71,7 +71,9 @@ const CreateChannelModal: React.FC<CreateChannelModalProps> = ({
             <input
               type="text"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
               placeholder="awesome-channel"
               required
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -84,7 +86,9 @@ const CreateChannelModal: React.FC<CreateChannelModalProps> = ({
             </label>
             <textarea
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               placeholder="What's this channel about?"
               rows={3}
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
@@ -94,15 +98,21 @@ const CreateChannelModal: React.FC<CreateChannelModalProps> = ({
           <div className="flex items-center space-x-3">
             <button
               type="button"
-              onClick={() => setFormData({ ...formData, is_private: !formData.is_private })}
+              onClick={() =>
+                setFormData({ ...formData, is_private: !formData.is_private })
+              }
               className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors duration-200 ${
                 formData.is_private
-                  ? 'bg-yellow-600 text-white'
-                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  ? "bg-yellow-600 text-white"
+                  : "bg-gray-700 text-gray-300 hover:bg-gray-600"
               }`}
             >
-              {formData.is_private ? <Lock className="w-4 h-4" /> : <Hash className="w-4 h-4" />}
-              <span>{formData.is_private ? 'Private' : 'Public'}</span>
+              {formData.is_private ? (
+                <Lock className="w-4 h-4" />
+              ) : (
+                <Hash className="w-4 h-4" />
+              )}
+              <span>{formData.is_private ? "Private" : "Public"}</span>
             </button>
           </div>
 
@@ -125,7 +135,7 @@ const CreateChannelModal: React.FC<CreateChannelModalProps> = ({
               disabled={loading}
               className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors duration-200"
             >
-              {loading ? 'Creating...' : 'Create'}
+              {loading ? "Creating..." : "Create"}
             </button>
           </div>
         </form>

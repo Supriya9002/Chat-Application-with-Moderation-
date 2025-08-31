@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Hash, Lock, Plus, Search, LogOut, Settings } from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
-import CreateChannelModal from './CreateChannelModal';
-import JoinChannelModal from './JoinChannelModal';
-import type { Channel } from './ChatLayout';
+import React, { useState, useEffect } from "react";
+import { Hash, Lock, Plus, Search, LogOut, Settings, User } from "lucide-react";
+import { useAuth } from "../../contexts/AuthContext";
+import CreateChannelModal from "./CreateChannelModal";
+import JoinChannelModal from "./JoinChannelModal";
+import UserProfileModal from "./UserProfileModal";
+import type { Channel } from "./ChatLayout";
 
 interface SidebarProps {
   channels: Channel[];
@@ -18,14 +19,15 @@ const Sidebar: React.FC<SidebarProps> = ({
   activeChannel,
   onChannelSelect,
   onChannelCreated,
-  onChannelJoined
+  onChannelJoined,
 }) => {
   const { user, logout } = useAuth();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredChannels = channels.filter(channel =>
+  const filteredChannels = channels.filter((channel) =>
     channel.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -33,7 +35,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     try {
       const date = new Date(dateString);
       if (isNaN(date.getTime())) {
-        return 'now';
+        return "now";
       }
       const now = new Date();
       const diff = now.getTime() - date.getTime();
@@ -41,13 +43,13 @@ const Sidebar: React.FC<SidebarProps> = ({
       const hours = Math.floor(diff / (1000 * 60 * 60));
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
-      if (minutes < 1) return 'now';
+      if (minutes < 1) return "now";
       if (minutes < 60) return `${minutes}m`;
       if (hours < 24) return `${hours}h`;
       return `${days}d`;
     } catch (error) {
-      console.error('Error formatting time:', error, dateString);
-      return 'now';
+      console.error("Error formatting time:", error, dateString);
+      return "now";
     }
   };
 
@@ -97,8 +99,8 @@ const Sidebar: React.FC<SidebarProps> = ({
               onClick={() => onChannelSelect(channel)}
               className={`w-full p-3 mb-1 rounded-lg text-left transition-colors duration-200 ${
                 activeChannel?._id === channel._id
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                  ? "bg-blue-600 text-white"
+                  : "text-gray-300 hover:bg-gray-700 hover:text-white"
               }`}
             >
               <div className="flex items-start justify-between">
@@ -111,7 +113,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                   <div className="min-w-0 flex-1">
                     <div className="font-medium truncate">{channel.name}</div>
                     {channel.description && (
-                      <div className="text-xs opacity-75 truncate">{channel.description}</div>
+                      <div className="text-xs opacity-75 truncate">
+                        {channel.description}
+                      </div>
                     )}
                   </div>
                 </div>
@@ -136,16 +140,27 @@ const Sidebar: React.FC<SidebarProps> = ({
             </div>
             <div>
               <div className="text-white font-medium">{user?.username}</div>
-              <div className="text-xs text-gray-400 capitalize">{user?.role}</div>
+              <div className="text-xs text-gray-400 capitalize">
+                {user?.role}
+              </div>
             </div>
           </div>
-          <button
-            onClick={logout}
-            className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors duration-200"
-            title="Logout"
-          >
-            <LogOut className="w-4 h-4" />
-          </button>
+          <div className="flex space-x-2">
+            <button
+              onClick={() => setShowProfileModal(true)}
+              className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors duration-200"
+              title="User Profile"
+            >
+              <User className="w-4 h-4" />
+            </button>
+            <button
+              onClick={logout}
+              className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors duration-200"
+              title="Logout"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -161,6 +176,13 @@ const Sidebar: React.FC<SidebarProps> = ({
         <JoinChannelModal
           onClose={() => setShowJoinModal(false)}
           onChannelJoined={onChannelJoined}
+        />
+      )}
+
+      {showProfileModal && (
+        <UserProfileModal
+          isOpen={showProfileModal}
+          onClose={() => setShowProfileModal(false)}
         />
       )}
     </div>

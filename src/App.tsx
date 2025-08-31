@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { AuthProvider } from './contexts/AuthContext';
-import { SocketProvider } from './contexts/SocketContext';
-import LoginForm from './components/Auth/LoginForm';
-import ChatLayout from './components/Chat/ChatLayout';
-import { useAuth } from './hooks/useAuth';
+import React, { useState, useEffect } from "react";
+import { AuthProvider } from "./contexts/AuthContext";
+import { SocketProvider } from "./contexts/SocketContext";
+import LoginForm from "./components/Auth/LoginForm";
+import ChatLayout from "./components/Chat/ChatLayout";
+import { useAuth } from "./hooks/useAuth";
 
 function AppContent() {
   const { user, loading } = useAuth();

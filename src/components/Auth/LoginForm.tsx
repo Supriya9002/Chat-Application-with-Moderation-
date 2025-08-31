@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { LogIn, UserPlus, MessageCircle } from 'lucide-react';
+import React, { useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+import { LogIn, UserPlus, MessageCircle } from "lucide-react";
 
 const LoginForm: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: ''
+    username: "",
+    email: "",
+    password: "",
   });
   const [loading, setLoading] = useState(false);
   const { login, register, error } = useAuth();
@@ -23,7 +23,7 @@ const LoginForm: React.FC = () => {
         await register(formData.username, formData.email, formData.password);
       }
     } catch (error) {
-      console.error('Auth error:', error);
+      console.error("Auth error:", error);
     } finally {
       setLoading(false);
     }
@@ -32,7 +32,7 @@ const LoginForm: React.FC = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -50,7 +50,10 @@ const LoginForm: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           {!isLogin && (
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-300 mb-1">
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium text-gray-300 mb-1"
+              >
                 Username
               </label>
               <input
@@ -67,7 +70,10 @@ const LoginForm: React.FC = () => {
           )}
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
               Email
             </label>
             <input
@@ -83,7 +89,10 @@ const LoginForm: React.FC = () => {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
               Password
             </label>
             <input
@@ -100,7 +109,13 @@ const LoginForm: React.FC = () => {
 
           {error && (
             <div className="text-red-400 text-sm text-center p-2 bg-red-900/20 rounded-lg">
-              {error}
+              <div className="font-medium mb-1">⚠️ Error</div>
+              <div>{error}</div>
+              {error.includes("Too many requests") && (
+                <div className="text-xs mt-2 text-yellow-400">
+                  💡 Try waiting a few minutes before attempting again
+                </div>
+              )}
             </div>
           )}
 
@@ -110,11 +125,18 @@ const LoginForm: React.FC = () => {
             className="w-full flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200"
           >
             {loading ? (
-              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              <>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <span>Processing...</span>
+              </>
             ) : (
               <>
-                {isLogin ? <LogIn className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}
-                <span>{isLogin ? 'Sign In' : 'Sign Up'}</span>
+                {isLogin ? (
+                  <LogIn className="w-4 h-4" />
+                ) : (
+                  <UserPlus className="w-4 h-4" />
+                )}
+                <span>{isLogin ? "Sign In" : "Sign Up"}</span>
               </>
             )}
           </button>
@@ -125,7 +147,9 @@ const LoginForm: React.FC = () => {
               onClick={() => setIsLogin(!isLogin)}
               className="text-blue-400 hover:text-blue-300 text-sm transition-colors duration-200"
             >
-              {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
+              {isLogin
+                ? "Don't have an account? Sign up"
+                : "Already have an account? Sign in"}
             </button>
           </div>
         </form>
